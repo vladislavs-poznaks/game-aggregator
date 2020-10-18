@@ -30,9 +30,19 @@
             </div>
         </div>
     @empty
-        <div>
-            <img src="/images/oval.svg" alt="Loading Spinner" class="animate-spin h-7 w-7 mt-12">
-        </div>
+        @foreach(range(1, 12) as $key)
+            <div class="game mt-8">
+                <div class="bg-gray-800 w-44 h-64">
+                    {{-- IMAGE HERE --}}
+                </div>
+                <div class="text-transparent text-lg bg-gray-700 leading-tight rounded mt-4">
+                    Game Title Here
+                </div>
+                <div class="inline-block text-transparent bg-gray-700 rounded mt-3">
+                    PS4, PC, Switch
+                </div>
+            </div>
+        @endforeach
     @endforelse
 
 </div> {{--End Popular Games--}}

@@ -35,8 +35,37 @@
             </div>
         </div>
     @empty
-        <div>
-            <img src="/images/oval.svg" alt="Loading Spinner" class="animate-spin h-7 w-7 mt-12">
-        </div>
+        @foreach(range(1, 3) as $key)
+            <div class="game bg-gray-800 rounded-lg shadow-md flex px-6 py-6">
+                <div class="flex-none">
+                    <div class="bg-gray-700 w-32 lg:w-48 h-40 lg:h-64">
+                        {{-- IMAGE HERE --}}
+                    </div>
+                </div>
+
+                <div class="ml-12">
+                    <div class="inline-block text-transparent bg-gray-700 text-lg leading-tight rounded mt-4">
+                        Longer Game Title Here
+                    </div>
+                    <div class="block">
+
+                    </div>
+                    <div class="inline-block text-transparent bg-gray-700 text-lg leading-tight rounded mt-1">
+                        PS4, PC, Switch
+                    </div>
+                    <div class="space-y-4 hidden lg:block mt-6">
+                        <span class="inline-block text-transparent bg-gray-700 rounded">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        </span>
+                        <span class="inline-block text-transparent bg-gray-700 rounded">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. At, dolore.
+                        </span>
+                        <span class="inline-block text-transparent bg-gray-700 rounded">
+                            Lorem ipsum dolor sit amet, consectetur.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     @endforelse
 </div>
