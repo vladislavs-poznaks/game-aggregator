@@ -2,7 +2,7 @@
     @forelse($games as $game)
         <div class="game bg-gray-800 rounded-lg shadow-md flex px-6 py-6">
             <div class="flex-none relative inline-block">
-                <a href="#">
+                <a href="{{ route('games.show', $game['slug']) }}">
                     <img src="{{ str_replace('thumb', 'cover_big', $game['cover']['url']) }}"
                          alt="{{ $game['name'] }}'s cover"
                          class="w-48 hover:opacity-75 transition ease-in-out duration-150"
@@ -21,7 +21,7 @@
             </div>
 
             <div class="ml-12">
-                <a href="#" class="block text-lg font-semibold leading-tight hover:text-gray-400 mt-4">
+                <a href="{{ route('games.show', $game['slug']) }}" class="block text-lg font-semibold leading-tight hover:text-gray-400 mt-4">
                     {{ $game['name'] }}
                 </a>
                 <div class="text-gray-400 mt-1">

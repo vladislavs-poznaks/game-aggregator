@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class GamesController extends Controller
 {
@@ -63,15 +64,37 @@ class GamesController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show(string $slug)
     {
-        //
+        $game = Http::withHeaders(config('services.igdb'))
+            ->withBody(
+                "
+                    fields name, cover.url, genres.name, summary, involved_companies.company.name, platforms.abbreviation,
+                    rating, aggregated_rating, websites.url, videos.*, screenshots.url,
+                    similar_games.cover.url, similar_games.name, similar_games.rating,
+                    similar_games.platforms.abbreviation, similar_games.slug;
+                    where slug=\"$slug\";
+                    ", 'Other'
+            )
+            ->post('https://api.igdb.com/v4/games')
+            ->json();
+
+        abort_if(! $game, 404);
+
+        $game = collect($game[0]);
+
+        $genres = (collect($game['genres'])->pluck('name'))->all();
+        $companies = (collect($game['involved_companies'])->pluck('company.name'))->all();
+        $platforms = (collect($game['platforms'])->pluck('abbreviation'))->all();
+
+        dump($game);
+
+        return view('show', [
+            'game' => $game,
+            'genres' => $genres,
+            'companies' => $companies,
+            'platforms' => $platforms
+        ]);
     }
 
     /**
