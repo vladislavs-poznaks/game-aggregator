@@ -15,7 +15,7 @@ class ComingSoon extends Component
     {
         $current = Carbon::now()->timestamp;
 
-        $this->games = Cache::remember('coming-soon', 7, function () use ($current) {
+        $response = Cache::remember('coming-soon', 7, function () use ($current) {
             return Http::withHeaders(config('services.igdb'))
                 ->withBody(
                     "
@@ -31,6 +31,8 @@ class ComingSoon extends Component
                 ->post('https://api.igdb.com/v4/games')
                 ->json();
         });
+
+        $this->games = $this->format($response);
     }
 
     public function render()

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class GamesController extends Controller
 {
@@ -66,11 +68,11 @@ class GamesController extends Controller
 
     public function show(string $slug)
     {
-        $game = Http::withHeaders(config('services.igdb'))
+        $response = Http::withHeaders(config('services.igdb'))
             ->withBody(
                 "
                     fields name, cover.url, genres.name, summary, involved_companies.company.name, platforms.abbreviation,
-                    rating, aggregated_rating, websites.url, videos.*, screenshots.url,
+                    rating, aggregated_rating, websites.category, websites.url, videos.*, screenshots.url,
                     similar_games.cover.url, similar_games.name, similar_games.rating,
                     similar_games.platforms.abbreviation, similar_games.slug;
                     where slug=\"$slug\";
@@ -79,55 +81,47 @@ class GamesController extends Controller
             ->post('https://api.igdb.com/v4/games')
             ->json();
 
-        abort_if(! $game, 404);
-
-        $game = collect($game[0]);
-
-        $genres = (collect($game['genres'])->pluck('name'))->all();
-        $companies = (collect($game['involved_companies'])->pluck('company.name'))->all();
-        $platforms = (collect($game['platforms'])->pluck('abbreviation'))->all();
-
-        dump($game);
+        abort_if(! $response, 404);
 
         return view('show', [
-            'game' => $game,
-            'genres' => $genres,
-            'companies' => $companies,
-            'platforms' => $platforms
+            'game' => $this->format($response),
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    private function format($response)
     {
-        //
-    }
+        $game = $response[0];
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return collect($game)->merge([
+            'cover_big_url' => Str::replaceFirst('thumb', 'cover_big', $game['cover']['url']),
+            'rating' => isset($game['rating']) ? round($game['rating']) . '%' : 'N/A',
+            'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) . '%' : 'N/A',
+            'genres' => collect($game['genres'])->pluck('name')->implode(', '),
+            'platforms' => collect($game['platforms'])->pluck('abbreviation')->implode(', '),
+            'company' => $game['involved_companies'][0]['company']['name'],
+            'video_url' => 'https://youtube.com/watch/' . $game['videos'][0]['video_id'],
+            'screenshots' => collect($game['screenshots'])->map(function ($screenshot) {
+               return [
+                   'big' => Str::replaceFirst('thumb', 'screenshot_big', $screenshot['url']),
+                   'huge' => Str::replaceFirst('thumb', 'screenshot_huge', $screenshot['url'])
+               ];
+            })->take(9),
+            'similar_games' => collect($game['similar_games'])->map(function ($game) {
+               return collect($game)->merge([
+                   'cover_big_url' =>
+                       isset($game['cover']['url'])
+                           ? Str::replaceFirst('thumb', 'cover_big', $game['cover']['url'])
+                           : 'https://via.placeholder.com/264x352',
+                   'rating' => isset($game['rating']) ? round($game['rating']) . '%' : 'N/A',
+                   'platforms' => collect($game['platforms'])->pluck('abbreviation')->implode(', ')
+               ]);
+            })->take(6),
+            'socials' => [
+                'website' => collect($game['websites'])->where('category', 1)->pluck('url')->first(),
+                'facebook' => collect($game['websites'])->where('category', 4)->pluck('url')->first(),
+                'twitter' => collect($game['websites'])->where('category', 5)->pluck('url')->first(),
+                'instagram' => collect($game['websites'])->where('category', 8)->pluck('url')->first(),
+            ],
+        ]);
     }
 }

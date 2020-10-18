@@ -16,7 +16,7 @@ class MostAnticipated extends Component
         $afterFourMonths = Carbon::now()->addMonths(4)->timestamp;
         $current = Carbon::now()->timestamp;
 
-        $this->games = Cache::remember('most-anticipated', 7, function () use ($afterFourMonths, $current) {
+        $response = Cache::remember('most-anticipated', 7, function () use ($afterFourMonths, $current) {
             return Http::withHeaders(config('services.igdb'))
                 ->withBody(
                     "
@@ -32,6 +32,8 @@ class MostAnticipated extends Component
                 ->post('https://api.igdb.com/v4/games')
                 ->json();
         });
+
+        $this->games = $this->format($response);
     }
 
     public function render()

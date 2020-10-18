@@ -3,7 +3,7 @@
         <div class="game bg-gray-800 rounded-lg shadow-md flex px-6 py-6">
             <div class="flex-none relative inline-block">
                 <a href="{{ route('games.show', $game['slug']) }}">
-                    <img src="{{ str_replace('thumb', 'cover_big', $game['cover']['url']) }}"
+                    <img src="{{ $game['cover_big_url'] }}"
                          alt="{{ $game['name'] }}'s cover"
                          class="w-48 hover:opacity-75 transition ease-in-out duration-150"
                     >
@@ -15,7 +15,7 @@
                     <div
                         class="font-semibold text-xs flex justify-center items-center h-full"
                     >
-                        {{ round($game['rating'], 0).'%' }}
+                        {{ $game['rating'] }}
                     </div>
                 </div>
             </div>
@@ -25,9 +25,7 @@
                     {{ $game['name'] }}
                 </a>
                 <div class="text-gray-400 mt-1">
-                    @foreach($game['platforms'] as $platform)
-                        {{ $platform['abbreviation'] }},
-                    @endforeach
+                    {{ $game['platforms'] }}
                 </div>
                 <p class="mt-6 text-gray-400 text-sm hidden lg:block">
                     {{ $game['summary'] }}

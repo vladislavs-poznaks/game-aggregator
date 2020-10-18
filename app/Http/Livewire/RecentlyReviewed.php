@@ -16,7 +16,7 @@ class RecentlyReviewed extends Component
         $beforeTwoMonths = Carbon::now()->subMonths(2)->timestamp;
         $current = Carbon::now()->timestamp;
 
-        $this->games = Cache::remember('recently-reviewed', 7, function () use ($beforeTwoMonths, $current) {
+        $response = Cache::remember('recently-reviewed', 7, function () use ($beforeTwoMonths, $current) {
             return Http::withHeaders(config('services.igdb'))
                 ->withBody(
                     "
@@ -33,6 +33,8 @@ class RecentlyReviewed extends Component
                 ->post('https://api.igdb.com/v4/games')
                 ->json();
         });
+
+        $this->games = $this->format($response);
     }
 
     public function render()

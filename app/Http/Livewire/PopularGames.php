@@ -17,7 +17,7 @@ class PopularGames extends Component
         $beforeTwoMonths = Carbon::now()->subMonths(2)->timestamp;
         $afterTwoMonths = Carbon::now()->addMonths(2)->timestamp;
 
-        $this->games = Cache::remember('popular-games', 7, function () use ($beforeTwoMonths, $afterTwoMonths) {
+        $response = Cache::remember('popular-games', 7, function () use ($beforeTwoMonths, $afterTwoMonths) {
             return Http::withHeaders(config('services.igdb'))
                 ->withBody(
                     "
@@ -33,6 +33,8 @@ class PopularGames extends Component
                 ->post('https://api.igdb.com/v4/games')
                 ->json();
         });
+
+        $this->games = $this->format($response);
     }
 
     public function render()
