@@ -1,4 +1,4 @@
-<div class="game flex">
+<div class="game flex animate-pulse">
     <div class="bg-gray-800 w-16 h-20">
         {{-- IMAGE HERE --}}
     </div>

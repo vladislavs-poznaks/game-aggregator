@@ -18,11 +18,6 @@
                     'event' => null,
                 ])
             @endpush
-{{--            <div--}}
-{{--                class="font-semibold text-xs flex justify-center items-center h-full"--}}
-{{--            >--}}
-{{--                {{ $game['rating'] }}--}}
-{{--            </div>--}}
         </div>
     </div>
     <a href="{{ route('games.show', $game['slug']) }}" class="block text-base font-semibold leading-tight hover:text-gray-400 mt-8">

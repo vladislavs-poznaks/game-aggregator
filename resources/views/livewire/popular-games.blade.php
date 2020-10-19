@@ -4,7 +4,7 @@
         <x-game-card :game="$game" />
     @empty
         @foreach(range(1, 12) as $key)
-            <div class="game mt-8">
+            <div class="game mt-8 animate-pulse">
                 <div class="bg-gray-800 w-44 h-64">
                     {{-- IMAGE HERE --}}
                 </div>
