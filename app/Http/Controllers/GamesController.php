@@ -94,12 +94,12 @@ class GamesController extends Controller
 
         return collect($game)->merge([
             'cover_big_url' => Str::replaceFirst('thumb', 'cover_big', $game['cover']['url']),
-            'rating' => isset($game['rating']) ? round($game['rating']) . '%' : 'N/A',
-            'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) . '%' : 'N/A',
+            'rating' => isset($game['rating']) ? round($game['rating']) : '0',
+            'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) : '0',
             'genres' => collect($game['genres'])->pluck('name')->implode(', '),
-            'platforms' => collect($game['platforms'])->pluck('abbreviation')->implode(', '),
+            'platforms' => collect($game['platforms'] ?? [])->pluck('abbreviation')->implode(', '),
             'company' => $game['involved_companies'][0]['company']['name'],
-            'video_url' => 'https://youtube.com/watch/' . $game['videos'][0]['video_id'],
+            'video_url' => isset($game['videos'][0]['video_id']) ? 'https://youtube.com/watch/' . $game['videos'][0]['video_id'] : '',
             'screenshots' => collect($game['screenshots'])->map(function ($screenshot) {
                return [
                    'big' => Str::replaceFirst('thumb', 'screenshot_big', $screenshot['url']),
@@ -112,8 +112,8 @@ class GamesController extends Controller
                        isset($game['cover']['url'])
                            ? Str::replaceFirst('thumb', 'cover_big', $game['cover']['url'])
                            : 'https://via.placeholder.com/264x352',
-                   'rating' => isset($game['rating']) ? round($game['rating']) . '%' : 'N/A',
-                   'platforms' => collect($game['platforms'])->pluck('abbreviation')->implode(', ')
+                   'rating' => round($game['rating'] ?? 0),
+                   'platforms' => collect($game['platforms'] ?? [])->pluck('abbreviation')->implode(', ')
                ]);
             })->take(6),
             'socials' => [

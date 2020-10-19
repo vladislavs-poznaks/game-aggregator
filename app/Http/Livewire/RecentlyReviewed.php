@@ -35,6 +35,15 @@ class RecentlyReviewed extends Component
         });
 
         $this->games = $this->format($response);
+
+        collect($this->games)->filter(function ($game) {
+            return $game['rating'];
+        })->each(function ($game) {
+            $this->emit('reviewGameWithRatingAdded', [
+                'slug' => 'review-' . $game['slug'],
+                'rating' => $game['rating']
+            ]);
+        });
     }
 
     public function render()

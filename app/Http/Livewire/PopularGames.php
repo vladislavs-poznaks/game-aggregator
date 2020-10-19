@@ -35,6 +35,15 @@ class PopularGames extends Component
         });
 
         $this->games = $this->format($response);
+
+        collect($this->games)->filter(function ($game) {
+            return $game['rating'];
+        })->each(function ($game) {
+            $this->emit('gameWithRatingAdded', [
+                'slug' => $game['slug'],
+                'rating' => $game['rating']
+            ]);
+        });
     }
 
     public function render()
