@@ -11,21 +11,25 @@ Laracasts tutorial [here](https://laracasts.com/series/build-a-video-game-aggreg
 Original tutorial is for Laravel 7, so below are few things to keep in mind.
 
 - Routes definition has been changed.
-`
+```php
 Route::get('/games/{slug}', [GamesController::class, 'show'])->name('games.show');`
+```
 - Http client worked with `withBody()` method instead of `withOptions()` method.
-`Http::withHeaders(config('services.igdb'))
-                 ->withBody(
-                     "
-                     fields name, slug, cover.url;
-                     where platforms = (48,49,130,6)
-                     & rating > 50;
-                     sort first_release_date asc;
-                     limit 4;
-                     ", 'Other'
-                 )
-                 ->post('https://api.igdb.com/v4/games')
-                 ->json();`
+```php
+Http::withHeaders(config('services.igdb'))
+     ->withBody(
+         "
+         fields name, slug, cover.url;
+         where platforms = (48,49,130,6)
+         & rating > 50;
+         sort first_release_date asc;
+         limit 4;
+         ", 'Other'
+     )
+     ->post('https://api.igdb.com/v4/games')
+     ->json();
+```
+
 - Multi-query can be requested using `withBody()` method.
 
 ### When using IGDB API
@@ -42,7 +46,7 @@ IGDB API documentation [here](https://api-docs.igdb.com/?shell#about)
 
 You can make use of Tailwind's animations for loading spinner & skeleton loader's pulse.
 
-Tailwind's animations [here]()
+Tailwind's animations [here](https://tailwindcss.com/docs/animation)
 
 ### UI's video
 
