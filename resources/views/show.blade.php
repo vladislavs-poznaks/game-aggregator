@@ -32,9 +32,6 @@
                                     'event' => null,
                                 ])
                             @endpush
-{{--                            <div class="font-semibold text-xs flex justify-center items-center h-full">--}}
-{{--                                {{ $game['rating'] }}--}}
-{{--                            </div>--}}
                         </div>
                         <div class="ml-4 text-xs">
                             Member <br> Score
@@ -49,9 +46,6 @@
                                     'event' => null,
                                 ])
                             @endpush
-{{--                            <div class="font-semibold text-xs flex justify-center items-center h-full">--}}
-{{--                                {{ $game['aggregated_rating'] }}--}}
-{{--                            </div>--}}
                         </div>
                         <div class="ml-4 text-xs">
                             Critic <br> Score
@@ -93,37 +87,101 @@
                 <p class="mt-12">
                     {{ $game['summary'] }}
                 </p>
-                <div class="mt-12">
-{{--                    <button--}}
-{{--                        class="flex bg-blue-500 text-white font-semibold px-4 py-4--}}
-{{--                        hover:bg-blue-600 rounded transition ease-in-out duration-150"--}}
-{{--                    >--}}
-{{--                        <svg class="w-6 fill-current" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"></path><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></svg>--}}
-{{--                        <span class="ml-2">Play Trailer</span>--}}
-{{--                    </button>--}}
-                    <a
-                        href="{{ $game['video_url'] }}"
-                        class="inline-flex bg-blue-500 text-white font-semibold px-4 py-4
+                <div
+                    class="mt-12"
+                    x-data="{ isTrailerVisible: false }"
+                >
+                    <button
+                        @click="isTrailerVisible = true"
+                        class="flex bg-blue-500 text-white font-semibold px-4 py-4
                         hover:bg-blue-600 rounded transition ease-in-out duration-150"
                     >
                         <svg class="w-6 fill-current" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"></path><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></svg>
                         <span class="ml-2">Play Trailer</span>
-                    </a>
+                    </button>
+
+                    <template x-if="isTrailerVisible">
+                        <div
+                            style="background-color: rgba(0, 0, 0, .5);"
+                            class="z-50 fixed top-0 left-0 w-full h-full flex items-center shadow-lg overflow-y-auto"
+                        >
+                            <div class="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
+                                <div class="bg-gray-900 rounded">
+                                    <div class="flex justify-end pr-4 pt-2">
+                                        <button
+                                            @click="isTrailerVisible = false"
+                                            @keydown.escape.window="isTrailerVisible = false"
+                                            class="text-3xl leading-none hover:text-gray-300"
+                                        >
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="modal-body px-8 py-8">
+                                        <div class="responsive-container overflow-hidden relative" style="padding-top: 56.25%">
+                                            <iframe
+                                                width="560"
+                                                height="315"
+                                                class="responsive-iframe absolute top-0 left-0 w-full h-full"
+                                                src="{{ $game['video_url'] }}"
+                                                style="border:0;"
+                                                allow="autoplay; encrypted-media"
+                                                allowfullscreen
+                                            ></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>{{--End Game Details--}}
 
-        <div class="images-container border-b border-gray-800 pb-12 mt-8">
+        <div
+            x-data="{ isScreenshotVisible: false, image: '' }"
+            class="images-container border-b border-gray-800 pb-12 mt-8"
+        >
             <h2 class="text-blue-500 uppercase tracking-wide font-semibold">Images</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-12">
                 @foreach($game['screenshots'] as $screenshot)
                 <div>
-                    <a href="{{ $screenshot['huge'] }}">
-                        <img src="{{ $screenshot['huge'] }}" alt="screenshot" class="hover:opacity-75 transition ease-in-out duration-150">
+                    <a
+                        href="#"
+                        @click.prevent="
+                            isScreenshotVisible = true
+                            image = '{{ $screenshot['big'] }}'
+                        "
+                    >
+                        <img src="{{ $screenshot['big'] }}" alt="screenshot" class="hover:opacity-75 transition ease-in-out duration-150">
                     </a>
                 </div>
                 @endforeach
             </div>
+
+            <template x-if="isScreenshotVisible">
+                <div
+                    style="background-color: rgba(0, 0, 0, .5);"
+                    class="z-50 fixed top-0 left-0 w-full h-full flex items-center shadow-lg overflow-y-auto"
+                >
+                    <div class="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
+                        <div class="bg-gray-900 rounded">
+                            <div class="flex justify-end pr-4 pt-2">
+                                <button
+                                    class="text-3xl leading-none hover:text-gray-300"
+                                    @click="isScreenshotVisible = false"
+                                    @keydown.escape.window="isScreenshotVisible = false"
+                                >
+                                    &times;
+                                </button>
+                            </div>
+                            <div class="modal-body px-8 py-8">
+                                <img :src="image" alt="screenshot">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
         </div>{{--End Images Container--}}
 
         <div class="similar-games-container mt-8">

@@ -99,7 +99,7 @@ class GamesController extends Controller
             'genres' => collect($game['genres'])->pluck('name')->implode(', '),
             'platforms' => collect($game['platforms'] ?? [])->pluck('abbreviation')->implode(', '),
             'company' => $game['involved_companies'][0]['company']['name'],
-            'video_url' => isset($game['videos'][0]['video_id']) ? 'https://youtube.com/watch/' . $game['videos'][0]['video_id'] : '',
+            'video_url' => isset($game['videos'][0]['video_id']) ? 'https://youtube.com/embed/' . $game['videos'][0]['video_id'] : '',
             'screenshots' => collect($game['screenshots'])->map(function ($screenshot) {
                return [
                    'big' => Str::replaceFirst('thumb', 'screenshot_big', $screenshot['url']),
