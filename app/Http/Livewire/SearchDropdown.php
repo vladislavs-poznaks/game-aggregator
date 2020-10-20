@@ -3,7 +3,6 @@
 namespace App\Http\Livewire;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Livewire\Component;
 
 class SearchDropdown extends Component
@@ -29,18 +28,5 @@ class SearchDropdown extends Component
         }
 
         return view('livewire.search-dropdown');
-    }
-
-    protected function format($response)
-    {
-        return collect($response)->map(function ($game) {
-
-            return collect($game)->merge([
-                'cover_small_url' => isset($game['cover'])
-                    ? Str::replaceFirst('thumb', 'cover_small', $game['cover']['url'])
-                    : 'https://via.placeholder.com/90x128',
-            ]);
-
-        });
     }
 }

@@ -93,34 +93,45 @@ class GamesController extends Controller
         $game = $response[0];
 
         return collect($game)->merge([
-            'cover_big_url' => Str::replaceFirst('thumb', 'cover_big', $game['cover']['url']),
-            'rating' => isset($game['rating']) ? round($game['rating']) : '0',
-            'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) : '0',
-            'genres' => collect($game['genres'])->pluck('name')->implode(', '),
-            'platforms' => collect($game['platforms'] ?? [])->pluck('abbreviation')->implode(', '),
-            'company' => $game['involved_companies'][0]['company']['name'],
-            'video_url' => isset($game['videos'][0]['video_id']) ? 'https://youtube.com/embed/' . $game['videos'][0]['video_id'] : '',
-            'screenshots' => collect($game['screenshots'])->map(function ($screenshot) {
-               return [
-                   'big' => Str::replaceFirst('thumb', 'screenshot_big', $screenshot['url']),
-                   'huge' => Str::replaceFirst('thumb', 'screenshot_huge', $screenshot['url'])
-               ];
-            })->take(9),
-            'similar_games' => collect($game['similar_games'])->map(function ($game) {
-               return collect($game)->merge([
-                   'cover_big_url' =>
-                       isset($game['cover']['url'])
+            'cover_big_url' => isset($game['cover'])
+                ? Str::replaceFirst('thumb', 'cover_big', $game['cover']['url'])
+                : 'https://via.placeholder.com/264x374/718096/FFFFFF/?text=(No Cover)',
+            'rating' => round($game['rating'] ?? 0),
+            'aggregated_rating' => round($game['aggregated_rating'] ?? 0),
+            'genres' =>
+                collect($game['genres'] ?? [])->pluck('name')->implode(', '),
+            'platforms' =>
+                collect($game['platforms'] ?? [])->pluck('abbreviation')->implode(', '),
+            'company' => isset($game['involved_companies'])
+                ? $game['involved_companies'][0]['company']['name']
+                : '',
+            'video_url' => isset($game['videos'])
+                ? 'https://youtube.com/embed/' . $game['videos'][0]['video_id']
+                : null,
+            'screenshots' =>
+                collect($game['screenshots'] ?? [])->map(function ($screenshot) {
+                    return Str::replaceFirst('thumb', 'screenshot_big', $screenshot['url']);
+                })->take(9),
+            'similar_games' =>
+                collect($game['similar_games'] ?? [])->map(function ($game) {
+                   return collect($game)->merge([
+                       'cover_big_url' => isset($game['cover'])
                            ? Str::replaceFirst('thumb', 'cover_big', $game['cover']['url'])
-                           : 'https://via.placeholder.com/264x352',
-                   'rating' => round($game['rating'] ?? 0),
-                   'platforms' => collect($game['platforms'] ?? [])->pluck('abbreviation')->implode(', ')
-               ]);
-            })->take(6),
+                           : 'https://via.placeholder.com/264x374/718096/FFFFFF/?text=(No Cover)',
+                       'rating' => round($game['rating'] ?? 0),
+                       'platforms' =>
+                           collect($game['platforms'] ?? [])->pluck('abbreviation')->implode(', ')
+                   ]);
+                })->take(6),
             'socials' => [
-                'website' => collect($game['websites'])->where('category', 1)->pluck('url')->first(),
-                'facebook' => collect($game['websites'])->where('category', 4)->pluck('url')->first(),
-                'twitter' => collect($game['websites'])->where('category', 5)->pluck('url')->first(),
-                'instagram' => collect($game['websites'])->where('category', 8)->pluck('url')->first(),
+                'website' =>
+                    collect($game['websites'])->where('category', 1)->pluck('url')->first(),
+                'facebook' =>
+                    collect($game['websites'])->where('category', 4)->pluck('url')->first(),
+                'twitter' =>
+                    collect($game['websites'])->where('category', 5)->pluck('url')->first(),
+                'instagram' =>
+                    collect($game['websites'])->where('category', 8)->pluck('url')->first(),
             ],
         ]);
     }

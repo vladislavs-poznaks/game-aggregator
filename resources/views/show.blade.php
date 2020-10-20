@@ -91,6 +91,7 @@
                     class="mt-12"
                     x-data="{ isTrailerVisible: false }"
                 >
+                    @if($game['video_url'])
                     <button
                         @click="isTrailerVisible = true"
                         class="flex bg-blue-500 text-white font-semibold px-4 py-4
@@ -99,6 +100,7 @@
                         <svg class="w-6 fill-current" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"></path><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></svg>
                         <span class="ml-2">Play Trailer</span>
                     </button>
+                    @endif
 
                     <template x-if="isTrailerVisible">
                         <div
@@ -143,19 +145,23 @@
         >
             <h2 class="text-blue-500 uppercase tracking-wide font-semibold">Images</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-12">
-                @foreach($game['screenshots'] as $screenshot)
+                @forelse($game['screenshots'] as $screenshot)
                 <div>
                     <a
                         href="#"
                         @click.prevent="
                             isScreenshotVisible = true
-                            image = '{{ $screenshot['big'] }}'
+                            image = '{{ $screenshot }}'
                         "
                     >
-                        <img src="{{ $screenshot['big'] }}" alt="screenshot" class="hover:opacity-75 transition ease-in-out duration-150">
+                        <img src="{{ $screenshot }}" alt="screenshot" class="hover:opacity-75 transition ease-in-out duration-150">
                     </a>
                 </div>
-                @endforeach
+                @empty
+                    <div>
+                        No Screenshots Available...
+                    </div>
+                @endforelse
             </div>
 
             <template x-if="isScreenshotVisible">
@@ -187,9 +193,13 @@
         <div class="similar-games-container mt-8">
             <h2 class="text-blue-500 uppercase tracking-wide font-semibold">Similar Games</h2>
             <div class="popular-games text-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-12">
-                @foreach($game['similar_games'] as $game)
+                @forelse($game['similar_games'] as $game)
                     <x-game-card :game="$game" />
-                @endforeach
+                @empty
+                    <div class="mt-8">
+                        No Similar Games found...
+                    </div>
+                @endforelse
         </div>{{--End Similar Games Container--}}
     </div>
 @endsection

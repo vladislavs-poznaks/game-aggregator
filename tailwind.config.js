@@ -5,7 +5,10 @@ module.exports = {
     // defaultLineHeights: true,
     // standardFontWeights: true
   },
-  purge: [],
+  purge: [
+      './app/**/*.php',
+      './resources/**/*.php'
+  ],
   theme: {
     extend: {
         spacing: {
